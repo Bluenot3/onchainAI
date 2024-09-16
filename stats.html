@@ -1,0 +1,507 @@
+<html>
+<head>
+<base href="https://immersive-data-explorer.com/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Immersive Data Explorer</title>
+<script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+<script src="https://unpkg.com/aframe-environment-component@1.3.1/dist/aframe-environment-component.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<style>
+  body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
+  #ui-overlay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 9999;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 300px;
+  }
+  .ui-group {
+    margin-bottom: 10px;
+  }
+  label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  select, input[type="file"] {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 2px 2px;
+    cursor: pointer;
+    border-radius: 3px;
+  }
+</style>
+</head>
+<body>
+  <div id="ui-overlay">
+    <h3>Immersive Data Explorer</h3>
+    <div class="ui-group">
+      <button id="toggleView">Toggle View</button>
+      <button id="randomizeData">Randomize Data</button>
+    </div>
+    <div class="ui-group">
+      <label for="dataStructure">Visualization Type:</label>
+      <select id="dataStructure">
+        <option value="scatter">3D Scatter Plot</option>
+        <option value="bar">3D Bar Chart</option>
+        <option value="pie">3D Pie Chart</option>
+        <option value="heatmap">3D Heatmap</option>
+        <option value="network">3D Network Graph</option>
+        <option value="surface">3D Surface Plot</option>
+      </select>
+    </div>
+    <div class="ui-group">
+      <label for="dataType">Data Type:</label>
+      <select id="dataType">
+        <option value="population">Population Data</option>
+        <option value="economic">Economic Data</option>
+        <option value="environmental">Environmental Data</option>
+        <option value="health">Health Data</option>
+        <option value="education">Education Data</option>
+        <option value="scientific">Scientific Data</option>
+      </select>
+    </div>
+    <div class="ui-group">
+      <label for="environment">Environment:</label>
+      <select id="environment">
+        <option value="default">Default</option>
+        <option value="tron">Tron</option>
+        <option value="forest">Forest</option>
+        <option value="threetowers">Three Towers</option>
+        <option value="japan">Japan</option>
+        <option value="starry">Starry Night</option>
+      </select>
+    </div>
+    <div class="ui-group">
+      <label for="fileUpload">Upload Your Data (CSV):</label>
+      <input type="file" id="fileUpload" accept=".csv">
+    </div>
+    <div class="ui-group">
+      <button id="resetCamera">Reset Camera</button>
+      <button id="toggleLabels">Toggle Labels</button>
+    </div>
+  </div>
+
+  <a-scene environment="preset: default">
+    <a-entity id="rig" position="0 1.6 5">
+      <a-camera look-controls wasd-controls></a-camera>
+      <a-entity laser-controls="hand: right"></a-entity>
+      <a-entity id="leftHand" hand-controls="hand: left"></a-entity>
+      <a-entity id="rightHand" hand-controls="hand: right"></a-entity>
+    </a-entity>
+
+    <a-entity id="dataContainer" position="0 0 -4"></a-entity>
+  </a-scene>
+
+  <script>
+    const dataContainer = document.querySelector('#dataContainer');
+    const toggleViewBtn = document.querySelector('#toggleView');
+    const randomizeDataBtn = document.querySelector('#randomizeData');
+    const dataStructureSelect = document.querySelector('#dataStructure');
+    const dataTypeSelect = document.querySelector('#dataType');
+    const environmentSelect = document.querySelector('#environment');
+    const fileUpload = document.querySelector('#fileUpload');
+    const resetCameraBtn = document.querySelector('#resetCamera');
+    const toggleLabelsBtn = document.querySelector('#toggleLabels');
+
+    let currentView = '3d';
+    let currentStructure = 'scatter';
+    let currentDataType = 'population';
+    let data = [];
+    let showLabels = true;
+
+    // Custom component for grabbable and scalable objects
+    AFRAME.registerComponent('grabbable', {
+      init: function () {
+        this.el.addEventListener('mousedown', this.onGrab.bind(this));
+        this.el.addEventListener('mouseup', this.onRelease.bind(this));
+      },
+      onGrab: function (evt) {
+        this.el.setAttribute('dynamic-body', 'mass: 1');
+        this.el.addState('grabbed');
+      },
+      onRelease: function (evt) {
+        this.el.removeAttribute('dynamic-body');
+        this.el.removeState('grabbed');
+      }
+    });
+
+    function generateRandomData(n = 50, dataType) {
+      const generators = {
+        population: () => ({
+          name: `City ${Math.floor(Math.random() * 100)}`,
+          population: Math.floor(Math.random() * 10000000),
+          growthRate: Math.random() * 5,
+          density: Math.random() * 10000
+        }),
+        economic: () => ({
+          country: `Country ${Math.floor(Math.random() * 100)}`,
+          gdp: Math.random() * 20000,
+          unemployment: Math.random() * 20,
+          inflation: Math.random() * 10
+        }),
+        environmental: () => ({
+          location: `Location ${Math.floor(Math.random() * 100)}`,
+          co2Emissions: Math.random() * 1000,
+          renewableEnergy: Math.random() * 100,
+          airQualityIndex: Math.random() * 500
+        }),
+        health: () => ({
+          region: `Region ${Math.floor(Math.random() * 100)}`,
+          lifeExpectancy: 50 + Math.random() * 40,
+          infantMortality: Math.random() * 100,
+          healthcareSpending: Math.random() * 10000
+        }),
+        education: () => ({
+          country: `Country ${Math.floor(Math.random() * 100)}`,
+          literacyRate: 50 + Math.random() * 50,
+          schoolEnrollment: Math.random() * 100,
+          educationExpenditure: Math.random() * 10
+        }),
+        scientific: () => ({
+          experiment: `Experiment ${Math.floor(Math.random() * 100)}`,
+          temperature: -50 + Math.random() * 100,
+          pressure: Math.random() * 1000,
+          reactivity: Math.random() * 100
+        })
+      };
+
+      return Array.from({ length: n }, generators[dataType]);
+    }
+
+    function updateDataVisualization() {
+      dataContainer.innerHTML = '';
+      
+      switch (currentStructure) {
+        case 'scatter':
+          createScatterPlot();
+          break;
+        case 'bar':
+          createBarChart();
+          break;
+        case 'pie':
+          createPieChart();
+          break;
+        case 'heatmap':
+          createHeatmap();
+          break;
+        case 'network':
+          createNetworkGraph();
+          break;
+        case 'surface':
+          createSurfacePlot();
+          break;
+      }
+    }
+
+    function createScatterPlot() {
+      const scale = 5;
+      data.forEach((point, i) => {
+        const [x, y, z] = getDataPoints(point, 3);
+        const sphere = document.createElement('a-sphere');
+        sphere.setAttribute('position', `${x * scale} ${y * scale} ${z * scale}`);
+        sphere.setAttribute('radius', '0.1');
+        sphere.setAttribute('color', getColor(point));
+        sphere.setAttribute('animation__pulse', `property: scale; to: 1.2 1.2 1.2; dir: alternate; dur: 1000; loop: true; easing: easeInOutQuad; delay: ${i * 100}`);
+        sphere.setAttribute('animation__orbit', `property: position; to: ${x * scale + Math.sin(i) * 0.5} ${y * scale + Math.cos(i) * 0.5} ${z * scale}; dir: alternate; dur: 5000; loop: true; easing: easeInOutQuad`);
+        sphere.setAttribute('grabbable', '');
+        
+        const text = document.createElement('a-text');
+        text.setAttribute('value', getLabel(point));
+        text.setAttribute('align', 'center');
+        text.setAttribute('position', `0 0.2 0`);
+        text.setAttribute('scale', '0.5 0.5 0.5');
+        text.setAttribute('look-at', '#rig');
+        text.setAttribute('visible', showLabels);
+
+        sphere.appendChild(text);
+        dataContainer.appendChild(sphere);
+      });
+    }
+
+    function createBarChart() {
+      const maxValue = Math.max(...data.map(d => getDataPoints(d, 1)[0]));
+      const scale = 5 / maxValue;
+
+      data.forEach((point, i) => {
+        const value = getDataPoints(point, 1)[0];
+        const bar = document.createElement('a-box');
+        bar.setAttribute('position', `${i * 0.5 - data.length * 0.25} ${value * scale / 2} 0`);
+        bar.setAttribute('width', '0.4');
+        bar.setAttribute('depth', '0.4');
+        bar.setAttribute('height', `${value * scale}`);
+        bar.setAttribute('color', getColor(point));
+        bar.setAttribute('animation__grow', `property: scale; from: 0 0 0; to: 1 1 1; dur: 1500; easing: elasticOut; delay: ${i * 100}`);
+        bar.setAttribute('animation__hover', `property: position; dir: alternate; dur: 2000; loop: true; to: ${i * 0.5 - data.length * 0.25} ${value * scale / 2 + 0.1} 0`);
+        bar.setAttribute('grabbable', '');
+        
+        const text = document.createElement('a-text');
+        text.setAttribute('value', getLabel(point));
+        text.setAttribute('align', 'center');
+        text.setAttribute('position', `0 ${value * scale / 2 + 0.2} 0`);
+        text.setAttribute('scale', '0.5 0.5 0.5');
+        text.setAttribute('look-at', '#rig');
+        text.setAttribute('visible', showLabels);
+
+        bar.appendChild(text);
+        dataContainer.appendChild(bar);
+      });
+    }
+
+    function createPieChart() {
+      const total = data.reduce((sum, d) => sum + getDataPoints(d, 1)[0], 0);
+      let startAngle = 0;
+
+      data.forEach((point, i) => {
+        const value = getDataPoints(point, 1)[0];
+        const angle = (value / total) * Math.PI * 2;
+        const endAngle = startAngle + angle;
+        const midAngle = startAngle + angle / 2;
+
+        const x = Math.cos(midAngle) * 2;
+        const z = Math.sin(midAngle) * 2;
+
+        const slice = document.createElement('a-entity');
+        slice.setAttribute('geometry', `primitive: cylinder; height: 0.2; radius: 2; thetaStart: ${startAngle * 180 / Math.PI}; thetaLength: ${angle * 180 / Math.PI}`);
+        slice.setAttribute('material', `color: ${getColor(point)}; side: double`);
+        slice.setAttribute('rotation', '90 0 0');
+        slice.setAttribute('position', '0 0 0');
+        slice.setAttribute('animation__explode', `property: position; to: ${x * 0.1} ${Math.random() * 0.2} ${z * 0.1}; dur: 1000; easing: easeOutElastic; delay: ${i * 100}`);
+        slice.setAttribute('animation__rotate', `property: rotation; to: 90 ${360 + i * (360 / data.length)} 0; dur: 5000; easing: easeInOutQuad; loop: true`);
+        slice.setAttribute('grabbable', '');
+
+        const text = document.createElement('a-text');
+        text.setAttribute('value', `${getLabel(point)} (${(value / total * 100).toFixed(1)}%)`);
+        text.setAttribute('align', 'center');
+        text.setAttribute('position', `${x * 0.7} 0.2 ${z * 0.7}`);
+        text.setAttribute('scale', '0.5 0.5 0.5');
+        text.setAttribute('look-at', '#rig');
+        text.setAttribute('visible', showLabels);
+
+        slice.appendChild(text);
+        dataContainer.appendChild(slice);
+
+        startAngle = endAngle;
+      });
+    }
+
+    function createHeatmap() {
+      const gridSize = Math.ceil(Math.sqrt(data.length));
+      const cellSize = 5 / gridSize;
+
+      data.forEach((point, i) => {
+        const row = Math.floor(i / gridSize);
+        const col = i % gridSize;
+        const value = getDataPoints(point, 1)[0];
+
+        const cell = document.createElement('a-box');
+        cell.setAttribute('position', `${col * cellSize - 2.5 + cellSize/2} ${row * cellSize - 2.5 + cellSize/2} ${value / 1000}`);
+        cell.setAttribute('width', cellSize);
+        cell.setAttribute('height', cellSize);
+        cell.setAttribute('depth', '0.1');
+        cell.setAttribute('color', getColor(point));
+        cell.setAttribute('animation__grow', `property: scale; from: 0 0 0; to: 1 1 1; dur: 1000; easing: easeOutElastic; delay: ${i * 50}`);
+        cell.setAttribute('animation__pulse', `property: scale; to: 1.1 1.1 1.1; dir: alternate; dur: 1000; loop: true; easing: easeInOutQuad`);
+        cell.setAttribute('grabbable', '');
+
+        const text = document.createElement('a-text');
+        text.setAttribute('value', getLabel(point));
+        text.setAttribute('align', 'center');
+        text.setAttribute('position', `0 0 0.06`);
+        text.setAttribute('scale', `${cellSize * 0.2} ${cellSize * 0.2} ${cellSize * 0.2}`);
+        text.setAttribute('color', 'white');
+        text.setAttribute('visible', showLabels);
+
+        cell.appendChild(text);
+        dataContainer.appendChild(cell);
+      });
+    }
+
+    function createNetworkGraph() {
+      const nodeRadius = 0.2;
+      const linkDistance = 2;
+
+      data.forEach((point, i) => {
+        const angle = (i / data.length) * Math.PI * 2;
+        const x = Math.cos(angle) * linkDistance;
+        const y = Math.sin(angle) * linkDistance;
+
+        const node = document.createElement('a-sphere');
+        node.setAttribute('position', `${x} ${y} 0`);
+        node.setAttribute('radius', nodeRadius);
+        node.setAttribute('color', getColor(point));
+        node.setAttribute('animation__pulse', `property: scale; to: 1.2 1.2 1.2; dir: alternate; dur: 1000; loop: true; easing: easeInOutQuad; delay: ${i * 100}`);
+        node.setAttribute('animation__orbit', `property: position; to: ${x + Math.sin(i) * 0.2} ${y + Math.cos(i) * 0.2} ${Math.sin(i * 2) * 0.2}; dir: alternate; dur: 5000; loop: true; easing: easeInOutQuad`);
+        node.setAttribute('grabbable', '');
+
+        const text = document.createElement('a-text');
+        text.setAttribute('value', getLabel(point));
+        text.setAttribute('align', 'center');
+        text.setAttribute('position', `0 ${nodeRadius + 0.1} 0`);
+        text.setAttribute('scale', '0.5 0.5 0.5');
+        text.setAttribute('look-at', '#rig');
+        text.setAttribute('visible', showLabels);
+
+        node.appendChild(text);
+        dataContainer.appendChild(node);
+
+        // Create links
+        for (let j = i + 1; j < data.length; j++) {
+          if (Math.random() < 0.3) { // 30% chance of connection
+            const endAngle = (j / data.length) * Math.PI * 2;
+            const endX = Math.cos(endAngle) * linkDistance;
+            const endY = Math.sin(endAngle) * linkDistance;
+
+            const link = document.createElement('a-entity');
+            link.setAttribute('line', `start: ${x} ${y} 0; end: ${endX} ${endY} 0; color: #CCCCCC`);
+            link.setAttribute('animation__fade', `property: line.opacity; from: 0; to: 1; dur: 1000; delay: ${i * 100 + j * 50}`);
+            dataContainer.appendChild(link);
+          }
+        }
+      });
+    }
+
+    function createSurfacePlot() {
+      const gridSize = Math.ceil(Math.sqrt(data.length));
+      const cellSize = 5 / gridSize;
+
+      for (let i = 0; i < gridSize; i++) {
+        for (let j = 0; j < gridSize; j++) {
+          const index = i * gridSize + j;
+          if (index >= data.length) continue;
+
+          const point = data[index];
+          const [x, y, z] = getDataPoints(point, 3);
+
+          const surface = document.createElement('a-box');
+          surface.setAttribute('position', `${j * cellSize - 2.5 + cellSize/2} ${i * cellSize - 2.5 + cellSize/2} ${z * 0.1}`);
+          surface.setAttribute('width', cellSize);
+          surface.setAttribute('height', cellSize);
+          surface.setAttribute('depth', '0.1');
+          surface.setAttribute('color', getColor(point));
+          surface.setAttribute('animation__rise', `property: position; from: ${j * cellSize - 2.5 + cellSize/2} ${i * cellSize - 2.5 + cellSize/2} -1; to: ${j * cellSize - 2.5 + cellSize/2} ${i * cellSize - 2.5 + cellSize/2} ${z * 0.1}; dur: 2000; easing: easeOutElastic; delay: ${index * 50}`);
+          surface.setAttribute('animation__color', `property: material.color; from: #FFF; to: ${getColor(point)}; dur: 2000; delay: ${index * 50}`);
+          surface.setAttribute('grabbable', '');
+
+          const text = document.createElement('a-text');
+          text.setAttribute('value', getLabel(point));
+          text.setAttribute('align', 'center');
+          text.setAttribute('position', `0 0 0.06`);
+          text.setAttribute('scale', `${cellSize * 0.2} ${cellSize * 0.2} ${cellSize * 0.2}`);
+          text.setAttribute('color', 'white');
+          text.setAttribute('visible', showLabels);
+
+          surface.appendChild(text);
+          dataContainer.appendChild(surface);
+        }
+      }
+    }
+
+    function getDataPoints(point, count) {
+      const dataTypeMap = {
+        population: ['population', 'growthRate', 'density'],
+        economic: ['gdp', 'unemployment', 'inflation'],
+        environmental: ['co2Emissions', 'renewableEnergy', 'airQualityIndex'],
+        health: ['lifeExpectancy', 'infantMortality', 'healthcareSpending'],
+        education: ['literacyRate', 'schoolEnrollment', 'educationExpenditure'],
+        scientific: ['temperature', 'pressure', 'reactivity']
+      };
+
+      return dataTypeMap[currentDataType].slice(0, count).map(key => point[key]);
+    }
+
+    function getLabel(point) {
+      const labelMap = {
+        population: d => `${d.name}: ${d.population.toLocaleString()}`,
+        economic: d => `${d.country}: $${d.gdp.toFixed(2)}B`,
+        environmental: d => `${d.location}: ${d.co2Emissions.toFixed(2)} MT`,
+        health: d => `${d.region}: ${d.lifeExpectancy.toFixed(1)} years`,
+        education: d => `${d.country}: ${d.literacyRate.toFixed(1)}% literacy`,
+        scientific: d => `${d.experiment}: ${d.temperature.toFixed(1)}°C`
+      };
+
+      return labelMap[currentDataType](point);
+    }
+
+    function getColor(point) {
+      const value = getDataPoints(point, 1)[0];
+      return `hsl(${value * 360 / 10000}, 100%, 50%)`;
+    }
+
+    toggleViewBtn.addEventListener('click', () => {
+      currentView = currentView === '3d' ? '2d' : '3d';
+      dataContainer.setAttribute('animation__rotate', `property: rotation; to: ${currentView === '2d' ? '-90 0 0' : '0 0 0'}; dur: 1000; easing: easeInOutQuad`);
+    });
+
+    randomizeDataBtn.addEventListener('click', () => {
+      data = generateRandomData(50, currentDataType);
+      updateDataVisualization();
+    });
+
+    dataStructureSelect.addEventListener('change', (e) => {
+      currentStructure = e.target.value;
+      updateDataVisualization();
+    });
+
+    dataTypeSelect.addEventListener('change', (e) => {
+      currentDataType = e.target.value;
+      data = generateRandomData(50, currentDataType);
+      updateDataVisualization();
+    });
+
+    environmentSelect.addEventListener('change', (e) => {
+      const scene = document.querySelector('a-scene');
+      scene.setAttribute('environment', `preset: ${e.target.value}`);
+    });
+
+    fileUpload.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      Papa.parse(file, {
+        complete: function(results) {
+          data = results.data.slice(1).map(row => {
+            const obj = {};
+            results.data[0].forEach((key, index) => {
+              obj[key] = parseFloat(row[index]) || row[index];
+            });
+            return obj;
+          });
+          currentDataType = 'custom';
+          updateDataVisualization();
+        }
+      });
+    });
+
+    resetCameraBtn.addEventListener('click', () => {
+      const rig = document.querySelector('#rig');
+      rig.setAttribute('animation__position', 'property: position; to: 0 1.6 5; dur: 1000; easing: easeInOutQuad');
+      rig.setAttribute('animation__rotation', 'property: rotation; to: 0 0 0; dur: 1000; easing: easeInOutQuad');
+    });
+
+    toggleLabelsBtn.addEventListener('click', () => {
+      showLabels = !showLabels;
+      document.querySelectorAll('a-text').forEach(text => {
+        text.setAttribute('visible', showLabels);
+      });
+    });
+
+    // Initialize
+    data = generateRandomData(50, currentDataType);
+    updateDataVisualization();
+  </script>
+</body>
+</html>
