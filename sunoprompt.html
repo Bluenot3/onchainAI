@@ -1,0 +1,118 @@
+<html><head><base href="https://suno.prompt.writer.en/">
+    <title>Suno AI Prompt Generator</title>
+    <style>
+        body, html { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 14px; background-color: #121212; color: #e0e0e0; }
+        .container { display: flex; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; background-color: #1e1e1e; padding: 20px; box-shadow: 0 0 10px rgba(0,255,0,0.1); }
+        .section { width: calc(25% - 20px); margin: 10px; }
+        h1 { width: 100%; text-align: center; font-size: 28px; margin: 20px 0; color: #4caf50; text-shadow: 0 0 5px rgba(76,175,80,0.5); }
+        h2 { font-size: 18px; margin: 10px 0; border-bottom: 2px solid #4caf50; padding-bottom: 5px; color: #4caf50; }
+        .options { display: flex; flex-wrap: wrap; gap: 5px; }
+        button { font-size: 12px; padding: 6px 12px; background: #2e2e2e; border: 1px solid #4caf50; cursor: pointer; border-radius: 3px; transition: all 0.3s ease; color: #e0e0e0; }
+        button:hover { background: #3e3e3e; box-shadow: 0 0 5px rgba(76,175,80,0.5); }
+        button.selected { background: #4caf50; color: #121212; border-color: #45a049; }
+        textarea { width: calc(100% - 20px); height: 120px; margin: 10px; padding: 10px; border: 1px solid #4caf50; border-radius: 3px; resize: vertical; background-color: #2e2e2e; color: #e0e0e0; }
+    </style>
+</head>
+<body>
+    <h1>Suno AI Prompt Generator</h1>
+    <div class="container">
+        <div class="section">
+            <h2>Main Genres</h2>
+            <div class="options" id="genre">
+                <button>Pop</button><button>Rock</button><button>Hip Hop</button><button>R&B</button><button>Electronic</button><button>Jazz</button><button>Classical</button><button>Country</button><button>Folk</button><button>Blues</button><button>Reggae</button><button>World Music</button><button>Funk</button><button>Soul</button><button>Indie</button>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Subgenres</h2>
+            <div class="options" id="subgenre">
+                <button>Indie Pop</button><button>Alternative Rock</button><button>Trap</button><button>Neo-Soul</button><button>House</button><button>Bebop</button><button>Baroque</button><button>Alt-Country</button><button>Bossa Nova</button><button>Delta Blues</button><button>Dub</button><button>Afrobeat</button><button>K-pop</button><button>J-pop</button><button>Synthwave</button><button>Post-Rock</button><button>Grime</button><button>Disco</button><button>Techno</button><button>Ambient</button>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Mood</h2>
+            <div class="options" id="mood">
+                <button>Happy</button><button>Sad</button><button>Energetic</button><button>Calm</button><button>Romantic</button><button>Angry</button><button>Nostalgic</button><button>Dreamy</button><button>Mysterious</button><button>Hopeful</button><button>Melancholic</button><button>Inspiring</button><button>Dark</button><button>Playful</button><button>Intense</button><button>Ethereal</button>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Instruments</h2>
+            <div class="options" id="instruments">
+                <button>Piano</button><button>Guitar</button><button>Drums</button><button>Bass</button><button>Synthesizer</button><button>Violin</button><button>Saxophone</button><button>Trumpet</button><button>Flute</button><button>Cello</button><button>Harp</button><button>Accordion</button><button>Banjo</button><button>Sitar</button><button>Ukulele</button><button>Harmonica</button>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Tempo</h2>
+            <div class="options" id="tempo">
+                <button>Slow</button><button>Medium</button><button>Fast</button><button>Variable</button>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Production Style</h2>
+            <div class="options" id="productionStyle">
+                <button>Lo-fi</button><button>Hi-fi</button><button>Acoustic</button><button>Electronic</button><button>Orchestral</button><button>Minimalist</button><button>Maximalist</button><button>Raw</button><button>Polished</button><button>Experimental</button>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Era</h2>
+            <div class="options" id="era">
+                <button>50s</button><button>60s</button><button>70s</button><button>80s</button><button>90s</button><button>2000s</button><button>2010s</button><button>2020s</button><button>Futuristic</button><button>Retro</button><button>Timeless</button>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Cultural Influence</h2>
+            <div class="options" id="culturalInfluence">
+                <button>Western</button><button>African</button><button>Asian</button><button>Latin American</button><button>Arabic</button><button>European</button><button>Scandinavian</button><button>Caribbean</button><button>Polynesian</button><button>Indigenous</button><button>American</button>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Lyrical Theme</h2>
+            <div class="options" id="lyricalTheme">
+                <button>Love</button><button>Heartbreak</button><button>Social Issues</button><button>Nature</button><button>Technology</button><button>Spirituality</button><button>Personal Growth</button><button>Fantasy</button><button>Storytelling</button><button>Nostalgia</button><button>Politics</button><button>Everyday Life</button>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Vocal Style</h2>
+            <div class="options" id="vocalStyle">
+                <button>Powerful</button><button>Soft</button><button>Raspy</button><button>Smooth</button><button>Auto-Tune</button><button>Whisper</button><button>Falsetto</button><button>Growl</button><button>Rap</button><button>Spoken Word</button><button>Scat</button>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Generated Music Prompt</h2>
+            <textarea id="generatedPrompt" readonly></textarea>
+        </div>
+        <div class="section">
+            <h2>Optimized Prompt for Suno AI</h2>
+            <textarea id="optimizedPrompt" readonly></textarea>
+        </div>
+    </div>
+
+    <script>
+        const sections = ['genre', 'subgenre', 'mood', 'instruments', 'tempo', 'productionStyle', 'era', 'culturalInfluence', 'lyricalTheme', 'vocalStyle'];
+        const selections = {};
+
+        sections.forEach(section => {
+            const buttons = document.querySelectorAll(`#${section} button`);
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    button.classList.toggle('selected');
+                    updatePrompt();
+                });
+            });
+        });
+
+        function updatePrompt() {
+            sections.forEach(section => {
+                selections[section] = Array.from(document.querySelectorAll(`#${section} button.selected`))
+                    .map(button => button.textContent);
+            });
+
+            const promptParts = sections.flatMap(section => selections[section]);
+            const generatedPrompt = promptParts.join(', ');
+            document.getElementById('generatedPrompt').value = generatedPrompt;
+
+            const optimizedPrompt = `Create a ${promptParts.length > 0 ? promptParts.join(', ') + ' ' : ''}song using Suno AI`;
+            document.getElementById('optimizedPrompt').value = optimizedPrompt;
+        }
+    </script>
+</body>
+</html>
