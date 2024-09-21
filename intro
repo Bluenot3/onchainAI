@@ -1,0 +1,590 @@
+<html><head><base href="https://ZENai.biz/"></head><body><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZEN AI Blockchain Literacy Program - 2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #50c878;
+            --bg-color: #0f0f1e;
+            --text-color: #ffffff;
+            --highlight-color: #ff6b6b;
+            --blockchain-color: #f39c12;
+            --gradient-start: #1a237e;
+            --gradient-end: #4a148c;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 4em;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .tagline {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.5s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 30px;
+            background-color: var(--highlight-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
+        }
+
+        .cta-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .cta-button:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .section {
+            margin: 80px 0;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease-out;
+        }
+
+        .section.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.1));
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+            opacity: 0;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+            transform: rotate(45deg) translate(10%, 10%);
+        }
+
+        .card:hover {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        .card-icon {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .module-selector {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+            gap: 15px;
+        }
+
+        .module-button {
+            padding: 12px 25px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            font-size: 1em;
+            font-weight: 600;
+        }
+
+        .module-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+
+        .module-button:hover::after {
+            width: 200px;
+            height: 200px;
+        }
+
+        .module-button:hover, .module-button.active {
+            background-color: var(--highlight-color);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .module-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+
+        .module-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .blockchain-visualizer {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(45deg, var(--blockchain-color), var(--primary-color));
+            border-radius: 20px;
+            margin-top: 40px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .block {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255,255,255,0.9);
+            position: absolute;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: var(--bg-color);
+            transition: all 0.5s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .countdown {
+            margin-top: 30px;
+            font-size: 1.8em;
+            font-weight: 600;
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        #timer {
+            font-size: 1.2em;
+            font-weight: 800;
+            color: var(--highlight-color);
+            margin-top: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            background-color: rgba(0,0,0,0.3);
+            margin-top: 80px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3em;
+            }
+
+            .tagline {
+                font-size: 1.2em;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .module-selector {
+                flex-direction: column;
+            }
+
+            .module-button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div id="particles-js"></div>
+        <div class="container">
+            <h1>ZEN AI Blockchain Literacy Program</h1>
+            <p class="tagline" id="tagline"></p>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLScNBjq-sAZqhKjGa0K549ZFrIFbsfwdOZF5k_WfSlseQKCkxg/viewform?usp=sf_link" class="cta-button">Pre-register for 2025</a>
+            <div id="countdown" class="countdown">
+                <p>Program Launches In:</p>
+                <div id="timer"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="about" class="section">
+            <h2>Embark on Your Blockchain Journey in 2025</h2>
+            <p>The ZEN AI Blockchain Literacy Program is set to revolutionize blockchain education in 2025. Our cutting-edge curriculum is designed to transform you into a blockchain expert, equipped to navigate and innovate in the rapidly evolving digital landscape. From foundational concepts to advanced applications, we'll guide you through every aspect of this transformative technology.</p>
+        </section>
+
+        <section id="core-principles" class="section">
+            <h2>Advanced Core Principles</h2>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-icon">🔗</div>
+                    <h3>Decentralized Ecosystems</h3>
+                    <p>Dive deep into the architecture of distributed networks, exploring novel consensus mechanisms and the intricacies of decentralized systems.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🔐</div>
+                    <h3>Quantum-Resistant Cryptography</h3>
+                    <p>Master next-generation cryptographic protocols designed to withstand quantum computing threats and ensure unbreakable blockchain security.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📊</div>
+                    <h3>Transparent Governance Models</h3>
+                    <p>Explore cutting-edge blockchain governance structures, focusing on community-driven decision making and transparent organizational models.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🚀</div>
+                    <h3>Cross-Chain Innovation</h3>
+                    <p>Discover the forefront of blockchain interoperability, learning to build applications that seamlessly operate across multiple blockchain networks.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="program-structure" class="section">
+            <h2>Program Structure: 6 Intensive Modules</h2>
+            <p>Our 2025 blockchain literacy program is meticulously crafted into 6 comprehensive modules, each designed to build your expertise progressively, incorporating the very latest in blockchain technology and industry practices.</p>
+            <div class="module-selector">
+                <button class="module-button" onclick="showModule(1)">Module 1</button>
+                <button class="module-button" onclick="showModule(2)">Module 2</button>
+                <button class="module-button" onclick="showModule(3)">Module 3</button>
+                <button class="module-button" onclick="showModule(4)">Module 4</button>
+                <button class="module-button" onclick="showModule(5)">Module 5</button>
+                <button class="module-button" onclick="showModule(6)">Module 6</button>
+            </div>
+            <div id="moduleContent">
+                <!-- Module content will be dynamically inserted here -->
+            </div>
+        </section>
+
+        <section id="blockchain-visualizer" class="section">
+            <h2>Blockchain in Action</h2>
+            <p>Experience the dynamic nature of blockchain technology with our real-time block creation visualizer!</p>
+            <div class="blockchain-visualizer" id="blockchainVisualizer">
+                <!-- Blocks will be dynamically added here -->
+            </div>
+        </section>
+
+        <section id="teaching-methods" class="section">
+            <h2>Cutting-edge Teaching Methods</h2>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-icon">💻</div>
+                    <h3>AI-Assisted Coding Labs</h3>
+                    <p>Develop complex blockchain applications with the guidance of our advanced AI tutoring system.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🕹️</div>
+                    <h3>Blockchain Metaverse</h3>
+                    <p>Immerse yourself in our custom-built blockchain metaverse, where abstract concepts come to life in interactive 3D environments.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">👥</div>
+                    <h3>Global Collaborative Projects</h3>
+                    <p>Work on real-world blockchain initiatives with peers and industry experts from around the globe.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🏆</div>
+                    <h3>Blockchain Hackathons</h3>
+                    <p>Participate in high-stakes coding competitions, solving real industry challenges and showcasing your skills to potential employers.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="cta" class="section">
+            <h2>Be at the Forefront of the Blockchain Revolution in 2025</h2>
+            <p>Secure your place in the future of technology. Join our comprehensive Blockchain Literacy Program and position yourself as a leader in this transformative field!</p>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLScNBjq-sAZqhKjGa0K549ZFrIFbsfwdOZF5k_WfSlseQKCkxg/viewform?usp=sf_link" class="cta-button">Pre-enroll for 2025</a>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 ZEN AI Co. Blockchain Literacy Program - Launching in 2025. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80 },
+                color: { value: '#ffffff' },
+                shape: { type: 'circle' },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                move: { enable: true, speed: 1 }
+            },
+            interactivity: {
+                events: {
+                    onhover: { enable: true, mode: 'repulse' },
+                    onclick: { enable: true, mode: 'push' }
+                }
+            }
+        });
+
+        // Intersection Observer for section animations
+        const scrollAnimation = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                    observer.unobserve(entry.target);
+                }
+            });
+        };
+
+        const options = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -100px 0px"
+        };
+
+        const observer = new IntersectionObserver(scrollAnimation, options);
+
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Module content
+        const moduleContent = [
+            {
+                title: "Module 1: Blockchain Foundations and Quantum Computing",
+                duration: "3 weeks",
+                description: "Explore the core principles of blockchain technology, including distributed ledgers and consensus mechanisms. Dive into the potential impact of quantum computing on blockchain security and learn about quantum-resistant cryptographic techniques."
+            },
+            {
+                title: "Module 2: Advanced Cryptoeconomics and Tokenomics",
+                duration: "3 weeks",
+                description: "Delve into the intricate world of cryptoeconomic systems, token design, and incentive structures. Analyze case studies of successful and failed tokenomic models, and design your own token economy."
+            },
+            {
+                title: "Module 3: Smart Contracts and Decentralized Applications (DApps)",
+                duration: "4 weeks",
+                description: "Master the art of writing secure and efficient smart contracts. Build sophisticated DApps using cutting-edge frameworks and tools, with a focus on scalability and user experience."
+            },
+            {
+                title: "Module 4: Interoperability and Cross-Chain Solutions",
+                duration: "3 weeks",
+                description: "Explore the latest advancements in blockchain interoperability. Learn to develop cross-chain applications and understand the intricacies of bridging different blockchain ecosystems."
+            },
+            {
+                title: "Module 5: Governance, Privacy, and Regulatory Compliance",
+                duration: "3 weeks",
+                description: "Dive deep into decentralized governance models, privacy-preserving technologies like zero-knowledge proofs, and navigate the complex landscape of global blockchain regulations."
+            },
+            {
+                title: "Module 6: Emerging Trends and Future of Blockchain",
+                duration: "2 weeks",
+                description: "Explore cutting-edge developments such as AI-blockchain integration, IoT and blockchain convergence, and the role of blockchain in building the metaverse. Engage in predictive analysis of future blockchain applications and their societal impact."
+            }
+        ];
+
+        function showModule(index) {
+            const content = moduleContent[index - 1];
+            const moduleContentDiv = document.getElementById('moduleContent');
+            moduleContentDiv.innerHTML = `
+                <div class="module-content active">
+                    <h3>${content.title}</h3>
+                    <p><strong>Duration:</strong> ${content.duration}</p>
+                    <p>${content.description}</p>
+                </div>
+            `;
+
+            // Update active button
+            document.querySelectorAll('.module-button').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index - 1);
+            });
+        }
+
+        // Initialize with the first module
+        showModule(1);
+
+        // Blockchain Visualizer
+        const visualizer = document.getElementById('blockchainVisualizer');
+        let blockCount = 0;
+
+        function addBlock() {
+            if (blockCount >= 10) {
+                visualizer.innerHTML = '';
+                blockCount = 0;
+            }
+
+            const block = document.createElement('div');
+            block.className = 'block';
+            block.textContent = blockCount + 1;
+            block.style.left = `${blockCount * 70}px`;
+            block.style.top = `${Math.random() * 190}px`;
+
+            visualizer.appendChild(block);
+            blockCount++;
+
+            setTimeout(() => {
+                block.style.left = `${(blockCount - 1) * 70}px`;
+            }, 50);
+        }
+
+        setInterval(addBlock, 2000);
+
+        // Countdown Timer
+        function updateCountdown() {
+            const launchDate = new Date("January 1, 2025 00:00:00").getTime();
+            const now = new Date().getTime();
+            const distance = launchDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("timer").innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+            if (distance < 0) {
+                clearInterval(countdownTimer);
+                document.getElementById("timer").innerHTML = "Program Launched!";
+            }
+        }
+
+        const countdownTimer = setInterval(updateCountdown, 1000);
+
+        const tagline = "Unlock the Power of Blockchain Technology in 2025";
+        let i = 0;
+
+        function typeWriter() {
+            if (i < tagline.length) {
+                document.getElementById("tagline").innerHTML += tagline.charAt(i);
+                i++;
+                setTimeout(typeWriter, 50);
+            }
+        }
+
+        typeWriter();
+    </script>
+</body>
+</html>
+</body></html>
